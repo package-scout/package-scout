@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "copy-demo": "cp ./index.html dist/index.html && cp ./demo/demo.html dist/demo/demo.html && cp ./demo/basic-usage.js dist/demo/basic-usage.js",
     "preview": "vite preview",
     "test": "vitest",
     "type-check": "tsc --noEmit"
