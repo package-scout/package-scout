@@ -226,9 +226,7 @@ export class WasmBundler {
       return totalLength
     }
 
-    // Fallback: estimate gzip size (roughly 70% of original for typical JS)
-    // todo: implement a proper gzip size calculation
-    return Math.round(new TextEncoder().encode(content).length * 0.7)
+    return -1; // indicate gzip size calculation is not available
   }
 
   async dispose(): Promise<void> {
