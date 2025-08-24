@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Package Build Stats - Browser Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #0052a3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #0066cc;
+        }
+        .error {
+            background: #fee;
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #0066cc;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0066cc;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #6c757d;
+            text-transform: uppercase;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 Package Build Stats - Browser Edition</h1>
+        <p>Analyze npm packages directly in your browser using WebAssembly and CDNs.</p>
+
+        <div class="input-group">
+            <label for="packageName">Package Name</label>
+            <input type="text" id="packageName" placeholder="e.g., lodash, react, vue" value="lodash">
+        </div>
+
+        <div class="input-group">
+            <label for="packageVersion">Version (optional)</label>
+            <input type="text" id="packageVersion" placeholder="e.g., 4.17.21, latest">
+        </div>
+
+        <div class="options">
+            <div class="input-group">
+                <label for="cdn">CDN Provider</label>
+                <select id="cdn">
+                    <option value="unpkg">unpkg</option>
+                    <option value="jsDelivr">jsDelivr</option>
+                    <option value="skypack">Skypack</option>
+                    <option value="esm.sh">esm.sh</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="minifier">Minifier</label>
+                <select id="minifier">
+                    <option value="esbuild">ESBuild</option>
+                    <option value="terser">Terser</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="customImports">Custom Imports (comma-separated)</label>
+                <input type="text" id="customImports" placeholder="e.g., debounce, throttle">
+            </div>
+
+            <div class="input-group">
+                <label>
+                    <input type="checkbox" id="debug"> Debug Mode
+                </label>
+            </div>
+        </div>
+
+        <button onclick="analyzePackage()" id="analyzeBtn">
+            🔍 Analyze Package
+        </button>
+
+        <button onclick="getExportSizes()" id="exportBtn">
+            📊 Get Export Sizes
+        </button>
+
+        <div id="results"></div>
+    </div>
+
+    <script type="module">
+        // This is a demo implementation - replace with actual imports when packages are installed
+        
+        let analyzer = null;
+
+        window.analyzePackage = async function() {
+            const packageName = document.getElementById('packageName').value.trim();
+            const version = document.getElementById('packageVersion').value.trim() || undefined;
+            const cdn = document.getElementById('cdn').value;
+            const minifier = document.getElementById('minifier').value;
+            const customImports = document.getElementById('customImports').value
+                .split(',')
+                .map(s => s.trim())
+                .filter(s => s);
+            const debug = document.getElementById('debug').checked;
+
+            if (!packageName) {
+                showError('Please enter a package name');
+                return;
+            }
+
+            const resultsDiv = document.getElementById('results');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            
+            analyzeBtn.disabled = true;
+            analyzeBtn.innerHTML = '<span class="loading"></span> Analyzing...';
+
+            try {
+                // Initialize analyzer
+                if (!analyzer) {
+                    // For demo purposes, we'll simulate the analysis
+                    // In a real implementation, you'd import the actual library
+                    await simulateInitialization();
+                }
+
+                // Simulate package analysis
+                const stats = await simulatePackageAnalysis(packageName, version, {
+                    cdn,
+                    minifier,
+                    customImports: customImports.length > 0 ? customImports : undefined,
+                    debug
+                });
+
+                showResults(stats);
+
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                analyzeBtn.disabled = false;
+                analyzeBtn.innerHTML = '🔍 Analyze Package';
+            }
+        };
+
+        window.getExportSizes = async function() {
+            const packageName = document.getElementById('packageName').value.trim();
+            const version = document.getElementById('packageVersion').value.trim() || undefined;
+
+            if (!packageName) {
+                showError('Please enter a package name');
+                return;
+            }
+
+            const exportBtn = document.getElementById('exportBtn');
+            exportBtn.disabled = true;
+            exportBtn.innerHTML = '<span class="loading"></span> Getting Exports...';
+
+            try {
+                const exportSizes = await simulateExportAnalysis(packageName, version);
+                showExportResults(exportSizes);
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                exportBtn.disabled = false;
+                exportBtn.innerHTML = '📊 Get Export Sizes';
+            }
+        };
+
+        function showResults(stats) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.className = 'results';
+            resultsDiv.innerHTML = `
+                <h3>📈 Analysis Results for ${stats.name}</h3>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">${formatBytes(stats.size)}</div>
+                        <div class="stat-label">Bundle Size</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${formatBytes(stats.gzipSize)}</div>
+                        <div class="stat-label">Gzipped Size</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${stats.dependencyCount}</div>
+                        <div class="stat-label">Dependencies</div>
+                    </div>
+                    ${stats.parseTime ? `
+                    <div class="stat-card">
+                        <div class="stat-value">${stats.parseTime.toFixed(2)}ms</div>
+                        <div class="stat-label">Parse Time</div>
+                    </div>
+                    ` : ''}
+                </div>
+
+                <h4>Package Details</h4>
+                <ul>
+                    <li><strong>Module Type:</strong> ${stats.isModuleType ? 'ES Module' : 'CommonJS'}</li>
+                    <li><strong>Has ES Module:</strong> ${stats.hasJSModule ? 'Yes' : 'No'}</li>
+                    <li><strong>Side Effects:</strong> ${stats.hasSideEffects ? 'Yes' : 'No'}</li>
+                    ${stats.peerDependencies.length > 0 ? `
+                    <li><strong>Peer Dependencies:</strong> ${stats.peerDependencies.join(', ')}</li>
+                    ` : ''}
+                </ul>
+
+                <details>
+                    <summary>Raw JSON</summary>
+                    <pre>${JSON.stringify(stats, null, 2)}</pre>
+                </details>
+            `;
+        }
+
+        function showExportResults(exportSizes) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.className = 'results';
+            resultsDiv.innerHTML = `
+                <h3>📊 Export Sizes for ${exportSizes.name}@${exportSizes.version}</h3>
+                
+                <div class="stats-grid">
+                    ${exportSizes.assets.map(asset => `
+                        <div class="stat-card">
+                            <div class="stat-value">${formatBytes(asset.size)}</div>
+                            <div class="stat-label">${asset.path}</div>
+                            <div style="font-size: 11px; color: #888;">
+                                Gzipped: ${formatBytes(asset.gzipSize)}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <details>
+                    <summary>Raw JSON</summary>
+                    <pre>${JSON.stringify(exportSizes, null, 2)}</pre>
+                </details>
+            `;
+        }
+
+        function showError(message) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.className = 'results error';
+            resultsDiv.innerHTML = `
+                <h3>❌ Error</h3>
+                <p>${message}</p>
+            `;
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Demo simulation functions (replace with actual implementation)
+        async function simulateInitialization() {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+
+        async function simulatePackageAnalysis(packageName, version, options) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Simulate different results based on package name
+            const mockData = {
+                'lodash': { size: 71000, gzipSize: 25000, deps: 0 },
+                'react': { size: 42000, gzipSize: 13000, deps: 2 },
+                'vue': { size: 36000, gzipSize: 12000, deps: 1 },
+                'moment': { size: 67000, gzipSize: 17000, deps: 0 },
+            };
+
+            const data = mockData[packageName.toLowerCase()] || { 
+                size: Math.floor(Math.random() * 100000) + 10000, 
+                gzipSize: Math.floor(Math.random() * 30000) + 5000,
+                deps: Math.floor(Math.random() * 10)
+            };
+
+            return {
+                name: packageName,
+                size: data.size,
+                gzipSize: data.gzipSize,
+                parseTime: options.debug ? Math.random() * 10 + 1 : undefined,
+                dependencyCount: data.deps,
+                hasJSNext: false,
+                hasJSModule: Math.random() > 0.5,
+                isModuleType: Math.random() > 0.7,
+                hasSideEffects: Math.random() > 0.5,
+                peerDependencies: [],
+                dependencySizes: [],
+                assets: [
+                    {
+                        name: 'main',
+                        size: data.size,
+                        gzipSize: data.gzipSize,
+                        type: 'js'
+                    }
+                ]
+            };
+        }
+
+        async function simulateExportAnalysis(packageName, version) {
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            const mockExports = [
+                'index.js',
+                'lib/main.js',
+                'dist/bundle.js'
+            ];
+
+            return {
+                name: packageName,
+                version: version || 'latest',
+                assets: mockExports.map(path => ({
+                    path,
+                    size: Math.floor(Math.random() * 50000) + 5000,
+                    gzipSize: Math.floor(Math.random() * 15000) + 2000,
+                    exportName: path
+                }))
+            };
+        }
+
+        // Show a demo message
+        document.addEventListener('DOMContentLoaded', () => {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.className = 'results';
+            resultsDiv.innerHTML = `
+                <h3>🚀 Demo Ready</h3>
+                <p>This is a demonstration of the browser-compatible package analysis tool. 
+                Enter a package name above and click "Analyze Package" to see simulated results.</p>
+                <p><strong>Note:</strong> This demo shows simulated data. The actual implementation would analyze real packages using WebAssembly and CDN APIs.</p>
+            `;
+        });
+    </script>
+</body>
+</html>
