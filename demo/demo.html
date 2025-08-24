@@ -186,6 +186,23 @@
         window.analyzePackage = async function() {
             const packageName = document.getElementById('packageName').value.trim();
             const version = document.getElementById('packageVersion').value.trim() || undefined;
+
+            if (!packageName) {
+                showError('Please enter a package name');
+                return;
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('action', 'analyze');
+            urlParams.set('package', packageName);
+            if (version) {
+                urlParams.set('version', version);
+            } else {
+                urlParams.delete('version');
+            }
+            const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+            window.history.replaceState({}, '', newUrl);
+
             const cdn = document.getElementById('cdn').value;
             const minifier = document.getElementById('minifier').value;
             const customImports = document.getElementById('customImports').value
@@ -193,11 +210,6 @@
                 .map(s => s.trim())
                 .filter(s => s);
             const debug = document.getElementById('debug').checked;
-
-            if (!packageName) {
-                showError('Please enter a package name');
-                return;
-            }
 
             const resultsDiv = document.getElementById('results');
             const analyzeBtn = document.getElementById('analyzeBtn');
@@ -239,6 +251,17 @@
                 showError('Please enter a package name');
                 return;
             }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('action', 'export');
+            urlParams.set('package', packageName);
+            if (version) {
+                urlParams.set('version', version);
+            } else {
+                urlParams.delete('version');
+            }
+            const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+            window.history.replaceState({}, '', newUrl);
 
             const exportBtn = document.getElementById('exportBtn');
             exportBtn.disabled = true;
