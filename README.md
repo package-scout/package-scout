@@ -1,2 +1,2 @@
 # Package Scout
-Scouts your npm packages in browser
+Scouts your npm packages in browser - WebAssembly powered

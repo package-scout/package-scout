@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Package Build Stats - Browser Edition</title>
+    <title>Package Scout</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -89,11 +89,11 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📦 Package Build Stats - Browser Edition</h1>
-            <p>WebAssembly-powered npm package analysis in your browser</p>
+            <h1>📦 Package Scout</h1>
+            <p>Scouts your npm packages in browser - WebAssembly powered</p>
         </div>
 
-        <div class="status status-success">
+        <!-- <div class="status status-success">
             ✅ <strong>Vite Dev Server Running</strong><br>
             The development server is now running on <code>http://localhost:5173</code>
         </div>
@@ -101,7 +101,7 @@
         <div class="status status-info">
             🚀 <strong>Getting Started</strong><br>
             This is a browser-compatible version of package-build-stats that uses CDN APIs and WebAssembly for package analysis.
-        </div>
+        </div> -->
 
         <div class="demo-links">
             <a href="./demo/demo.html" class="demo-card">
@@ -111,21 +111,21 @@
                 </div>
             </a>
 
-            <a href="./src/index.ts" class="demo-card">
+            <a href="https://github.com/package-scout/package-scout" target="_blank" class="demo-card">
                 <div class="demo-title">🔧 Source Code</div>
                 <div class="demo-description">
                     Browse the TypeScript source code and see how Node.js APIs are replaced with browser-compatible alternatives.
                 </div>
             </a>
 
-            <a href="./demo/basic-usage.js" class="demo-card">
+            <a href="https://github.com/package-scout/package-scout/tree/main/demo" target="_blank" class="demo-card">
                 <div class="demo-title">📝 Code Examples</div>
                 <div class="demo-description">
                     JavaScript examples showing how to use the API for package analysis, CDN comparison, and more.
                 </div>
             </a>
 
-            <a href="./README.md" class="demo-card">
+            <a href="https://github.com/package-scout/package-scout/blob/main/README.md" target="_blank" class="demo-card">
                 <div class="demo-title">📚 Documentation</div>
                 <div class="demo-description">
                     Complete documentation including API reference, browser requirements, and implementation details.
@@ -133,15 +133,15 @@
             </a>
         </div>
 
-        <h3>🚀 Quick API Test</h3>
+        <!-- <h3>🚀 Quick API Test</h3>
         <p>Open your browser's developer console and try this:</p>
         <pre><code>// Note: This is a demonstration - the actual modules need to be properly imported
-fetch('/src/index.ts').then(r => r.text()).then(console.log)</code></pre>
+fetch('/src/index.ts').then(r => r.text()).then(console.log)</code></pre> -->
 
         <h3>🛠️ Development</h3>
         <ul>
             <li><strong>Install:</strong> <code>pnpm install</code></li>
-            <li><strong>Dev Server:</strong> <code>pnpm run dev</code> (currently running)</li>
+            <li><strong>Dev Server:</strong> <code>pnpm run dev</code> <!-- (currently running) --></li>
             <li><strong>Build:</strong> <code>pnpm run build</code></li>
             <li><strong>Type Check:</strong> <code>pnpm run type-check</code></li>
         </ul>
@@ -153,8 +153,11 @@ fetch('/src/index.ts').then(r => r.text()).then(console.log)</code></pre>
             <li>SharedArrayBuffer for WebContainer (optional, requires COOP/COEP headers)</li>
         </ul>
 
-        <div class="status status-info">
+        <!-- <div class="status status-info">
             💡 <strong>Note:</strong> This is a proof-of-concept implementation showing how to migrate Node.js-only tools to browser-compatible versions using WebAssembly and modern web APIs.
+        </div> -->
+        <div class="status status-info">
+            💡 <strong>Source:</strong> https://github.com/package-scout/package-scout/
         </div>
     </div>
 

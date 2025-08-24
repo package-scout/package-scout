@@ -1,7 +1,7 @@
 {
   "name": "package-scout",
   "version": "0.0.0",
-  "description": "Scouts your npm packages in browser",
+  "description": "Scouts your npm packages in browser - WebAssembly powered",
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
