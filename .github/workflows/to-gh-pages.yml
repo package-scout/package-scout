@@ -31,7 +31,7 @@ jobs:
         run: mkdir -p dist/demo
     
       - name: Copy html
-        run: cp ./index.html dist/index.html && cp ./demo/demo.html dist/demo/demo.html && cp ./demo/basic-usage.js dist/demo/basic-usage.js
+        run: pnpm copy-demo
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
