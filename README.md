@@ -71,7 +71,3 @@ Full API docs and implementation details are available in the [source code](http
 
 ## 📝 License
 MIT License
-
-<a href="https://launchigniter.com/product/package-scout?ref=badge-package-scout" target="_blank">
-  <img src="https://launchigniter.com/api/badge/package-scout?theme=neutral" alt="Featured on LaunchIgniter" width="212" height="55" />
-</a>
