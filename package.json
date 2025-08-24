@@ -1,5 +1,5 @@
 {
-  "name": "pack-scout",
+  "name": "package-scout",
   "version": "0.0.0",
   "description": "Scouts your npm packages in browser",
   "main": "dist/index.js",
