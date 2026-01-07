@@ -41,6 +41,9 @@
   "author": "Maifee Ul Asad<maifeeulasad@gmail.com>",
   "license": "MIT",
   "packageManager": "pnpm@10.8.0",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "dependencies": {
     "@rollup/browser": "^4.0.0",
     "@webcontainer/api": "^1.1.9",
